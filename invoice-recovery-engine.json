@@ -1,0 +1,901 @@
+{
+  "name": "Invoice Recovery Engine-AI Generated Draft",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{ $json[\"AssembledPrompt\"] }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        768,
+        0
+      ],
+      "id": "33736557-b035-451f-805f-f1e24b885f81",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "=models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        704,
+        208
+      ],
+      "id": "d8717919-c7d3-4a3c-b0f3-5f2970a2fac4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k42FE4IURIuLMLSb",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9f8a6f3e-213a-448d-8e93-712bedb6936e",
+              "name": "AssembledPrompt",
+              "value": "=You are an expert accounts receivable collection assistant for Invoice Recovery Ops. Your goal is to write a highly effective, personalized invoice recovery email to a debtor.  CRITICAL RULE: You must analyze the provided \"Tone Preference\" and \"Email Examples\" to perfectly mirror the client's unique communication style, vocabulary, layout, and sign-off. Do not include subject lines, markdown formatting like asterisks, or conversational intro/outro text. Output ONLY the raw email body text.  Please write a tone-matched invoice recovery email based on these exact client details: --- CLIENT DETAILS: - Client Name: {{ $json[\"Client Name\"] }} - Late Invoice Amount: {{ $json[\"Amount Due\"] }} - Service Provided: {{ $json[\"Service Provided\"] }} - Days Overdue: {{ $json[\"Days Overdue\"] }}  STYLE MATCHING PROFILE: - Target Tone: {{ $json[\"Tone Preference\"] }} - Direct Style Examples to Mirror: {{ $json[\"Email Examples\"] }} ---  Include placeholders like [Your Name] where appropriate.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        0
+      ],
+      "id": "a53ef10c-2cb1-497f-8e0f-c3780232a495",
+      "name": "Prepare AI Context"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU",
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 734879788,
+          "mode": "list",
+          "cachedResultName": "InvoicesRecovery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit#gid=734879788"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice Number": "=={{ $('Prepare AI Context').item.json[\"Invoice Number\"] }}",
+            "AI Generated Draft": "=={{ $json.text }}"
+          },
+          "matchingColumns": [
+            "Invoice Number"
+          ],
+          "schema": [
+            {
+              "id": "Client Name",
+              "displayName": "Client Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Debtor Email",
+              "displayName": "Debtor Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Number",
+              "displayName": "Invoice Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount Due",
+              "displayName": "Amount Due",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Overdue",
+              "displayName": "Days Overdue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Provided",
+              "displayName": "Service Provided",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tone Preference",
+              "displayName": "Tone Preference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Examples",
+              "displayName": "Email Examples",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Generated Draft",
+              "displayName": "AI Generated Draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "3cdfe92c-23ac-4a1e-a5b6-43e762dd5658",
+      "name": "Mark Invoice: Draft Generated",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ibovmL2G4D7Y2Ci4",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@example.com",
+        "subject": "Action Required: Review Recovery Email Draft",
+        "message": "=<p>Here is the AI-generated recovery draft for your review:</p>\n<hr>\n<p style=\"background: #f3f4f6; padding: 15px; border-radius: 5px; white-space: pre-wrap;\">{{ $('Basic LLM Chain').item.json.text }}</p>\n<hr>\n<p>Please click an option below to take action:</p>\n<p>\n  <a href=\"https://davis-ops.app.n8n.cloud/webhook-test/approve-draft?debtorEmail={{ $('On Past Due Invoice Update').item.json['Debtor Email'] }}&draftText={{ encodeURIComponent($('Basic LLM Chain').item.json.text) }}&invoiceNumber={{ $('On Past Due Invoice Update').item.json['Invoice Number'] }}\" style=\"background:#22c55e; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; margin-right:10px; display:inline-block; font-weight:bold;\">👍 Approve & Send</a>\n  <a href=\"https://davis-ops.app.n8n.cloud/webhook-test/edit-draft?invoiceNumber={{ $('On Past Due Invoice Update').item.json['Invoice Number'] }}\" style=\"background:#ef4444; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; display:inline-block; font-weight:bold;\">📝 Request Changes</a>\n</p>",
+        "options": {
+          "senderName": "Invoice Recovery Ops Automation",
+          "replyTo": "YOUR_EMAIL@example.com"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "0d5549e2-c90a-48ce-a0c3-d4d0059cd19b",
+      "name": "Send Review Email to Operator",
+      "webhookId": "2867cbc2-afcb-4b19-9cfa-ce3283601cc5",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UFhIiW2wBdSS4HuP",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "approve-draft",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Context-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        352
+      ],
+      "id": "fa8a072d-7d84-4fa0-8d46-18ae1400be15",
+      "name": "Approve Webhook Endpoint",
+      "webhookId": "61f038e0-0abc-4363-ad66-d86bc8f177c8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "99c7b18d-a907-4df4-bd2a-d54392cadcde",
+              "name": "Response",
+              "value": "<div style=\"font-family: sans-serif; text-align: center; padding: 50px;\">   <h2 style=\"color: #22c55e;\">✔ Email Approved</h2>   <p style=\"color: #4b5563; font-size: 16px;\">The invoice recovery draft has been approved and queued to send.</p> </div>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        352
+      ],
+      "id": "2a4e58c0-2730-4723-bc71-d295bcd32361",
+      "name": "Parse Approval Token"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.query.debtorEmail }}",
+        "subject": "Urgent Update Required: Outstanding Invoice Details",
+        "message": "={{ $json.query.draftText }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        352
+      ],
+      "id": "2ead77b0-ec75-4e03-990d-61fbf82a3e54",
+      "name": "Send Final Email to Debtor",
+      "webhookId": "8c92895f-4eb5-4a73-b5e0-37343def6f71",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UFhIiW2wBdSS4HuP",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU",
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 734879788,
+          "mode": "list",
+          "cachedResultName": "InvoicesRecovery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit#gid=734879788"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice Number": "={{ $json.query.invoiceNumber }}",
+            "Status": "Approved"
+          },
+          "matchingColumns": [
+            "Invoice Number"
+          ],
+          "schema": [
+            {
+              "id": "Client Name",
+              "displayName": "Client Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Debtor Email",
+              "displayName": "Debtor Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Number",
+              "displayName": "Invoice Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount Due",
+              "displayName": "Amount Due",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Overdue",
+              "displayName": "Days Overdue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Provided",
+              "displayName": "Service Provided",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tone Preference",
+              "displayName": "Tone Preference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Examples",
+              "displayName": "Email Examples",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Generated Draft",
+              "displayName": "AI Generated Draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        912,
+        352
+      ],
+      "id": "46e57fa9-bd5b-4b37-ba0a-21ac6d6248ed",
+      "name": "Mark Invoice: Approved & Sent",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ibovmL2G4D7Y2Ci4",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "edit-draft",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Context-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        512
+      ],
+      "id": "ffcd8333-f440-483a-9b90-bc97fe1df76d",
+      "name": "Revision Webhook Endpoint",
+      "webhookId": "61f038e0-0abc-4363-ad66-d86bc8f177c8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "99c7b18d-a907-4df4-bd2a-d54392cadcde",
+              "name": "Response",
+              "value": "<div style=\"font-family: sans-serif; text-align: center; padding: 50px;\">   <h2 style=\"color: #ef4444;\">⏸ Draft Paused</h2>   <p style=\"color: #4b5563; font-size: 16px;\">The automated email has been paused. Please reply directly to the notification email to let us know what changes are needed.</p> </div>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        512
+      ],
+      "id": "cd4dc3ae-ef6c-42c2-ab09-ce81107420af",
+      "name": "Parse Revision Token"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU",
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 734879788,
+          "mode": "list",
+          "cachedResultName": "InvoicesRecovery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit#gid=734879788"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Invoice Number": "={{ $json.query.invoiceNumber }}",
+            "Status": "Revision Required"
+          },
+          "matchingColumns": [
+            "Invoice Number"
+          ],
+          "schema": [
+            {
+              "id": "Client Name",
+              "displayName": "Client Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Debtor Email",
+              "displayName": "Debtor Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Number",
+              "displayName": "Invoice Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Amount Due",
+              "displayName": "Amount Due",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Overdue",
+              "displayName": "Days Overdue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Provided",
+              "displayName": "Service Provided",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tone Preference",
+              "displayName": "Tone Preference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Examples",
+              "displayName": "Email Examples",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "AI Generated Draft",
+              "displayName": "AI Generated Draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        704,
+        512
+      ],
+      "id": "1d73ef30-fe18-4e42-a24f-421332383331",
+      "name": "Mark Invoice: Paused for Revision",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ibovmL2G4D7Y2Ci4",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU",
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 734879788,
+          "mode": "list",
+          "cachedResultName": "InvoicesRecovery",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit#gid=734879788"
+        },
+        "event": "rowUpdate",
+        "options": {
+          "columnsToWatch": [
+            "Status"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "01c36398-af79-4884-8544-c869fa511d19",
+      "name": "On Past Due Invoice Update",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "r8WKiVyPKImoLWat",
+          "name": "Google Sheets Trigger OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3a7c2cb7-6cca-4b20-b267-840b8009c30d",
+              "leftValue": "=={{ $json[\"Status\"] }}",
+              "rightValue": "Generate Draft",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "25f47cb0-08f8-41a3-9891-ba0d4b964ab2",
+      "name": "Check If Draft Needed"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Mark Invoice: Draft Generated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Context": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Invoice: Draft Generated": {
+      "main": [
+        [
+          {
+            "node": "Send Review Email to Operator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve Webhook Endpoint": {
+      "main": [
+        [
+          {
+            "node": "Parse Approval Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Approval Token": {
+      "main": [
+        [
+          {
+            "node": "Send Final Email to Debtor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Final Email to Debtor": {
+      "main": [
+        [
+          {
+            "node": "Mark Invoice: Approved & Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revision Webhook Endpoint": {
+      "main": [
+        [
+          {
+            "node": "Parse Revision Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Revision Token": {
+      "main": [
+        [
+          {
+            "node": "Mark Invoice: Paused for Revision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On Past Due Invoice Update": {
+      "main": [
+        [
+          {
+            "node": "Check If Draft Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Draft Needed": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a84f7381-1697-4cbf-9c2a-865c8633ed35",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "202ffa58ae59e962189dcf140e540ab291000d1f91b4dc0d49af54d56a8f2cfc"
+  },
+  "nodeGroups": [],
+  "id": "S1IFrTn1l0vk3MXo",
+  "tags": []
+}

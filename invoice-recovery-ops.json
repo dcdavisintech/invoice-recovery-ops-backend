@@ -1,0 +1,218 @@
+{
+  "name": "Invoice Recovery Ops",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a short, friendly, and helpful email to {{ $('Fetch Pending Invoices').item.json[\"Client Name\"] }} regarding their overdue invoice for {{ $('Fetch Pending Invoices').item.json[\"Service Provided\"] }}.\n\nDetails:\nAmount: ${{ $('Fetch Pending Invoices').item.json[\"Amount Due\"] }}\nDays Overdue: {{ $('Fetch Pending Invoices').item.json[\"Days Overdue\"] }} days\n\nFormatting Requirements:\nDo NOT include a subject line inside the text.\nUse <p> and </p> tags around every paragraph so it separates correctly in HTML.\nUse <br> for line breaks.\n\nSound like a helpful human, not a bot.\n\nSign the email as: Andrew Davis",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c142bcd7-a4e6-482c-9ee8-ac22d3664fa1",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        352,
+        208
+      ],
+      "id": "9bb7a79d-a63a-4e7f-a026-ec2889c5b8e0",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k42FE4IURIuLMLSb",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bb266796-60d7-44a2-8840-fc7d37fb6c66",
+      "name": "Manual Engine Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU",
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 734879788,
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit#gid=734879788"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2dd433be-0967-457e-9056-f44656227fbb",
+      "name": "Fetch Pending Invoices",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ibovmL2G4D7Y2Ci4",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Fetch Pending Invoices').item.json.Email }}",
+        "subject": "=Friendly check-in regarding your {{ $('Fetch Pending Invoices').item.json[\"Service Provided\"] }} invoice",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "f8845fdf-3de2-4e34-b3b0-d686d39eafb4",
+      "name": "Send Initial Draft to Operator",
+      "webhookId": "fe24ab23-89a4-4b19-a829-f52e8b974866",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UFhIiW2wBdSS4HuP",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "712c48ee-7304-4a65-b4a1-e2cb08ea51a5",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        816,
+        144
+      ],
+      "id": "5d4ded6f-f0bb-4a22-ae75-3efcbc8e0bf6",
+      "name": "Check Loop Status"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Check Loop Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Engine Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Pending Invoices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Pending Invoices": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Loop Status": {
+      "main": [
+        [
+          {
+            "node": "Send Initial Draft to Operator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f1ccba7d-30a7-40fb-a607-0dab98306594",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "202ffa58ae59e962189dcf140e540ab291000d1f91b4dc0d49af54d56a8f2cfc"
+  },
+  "nodeGroups": [],
+  "id": "XybQfHqYtIt058gk",
+  "tags": []
+}

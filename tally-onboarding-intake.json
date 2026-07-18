@@ -1,0 +1,191 @@
+{
+  "name": "Tally to Sheets Onboarding Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tally-onboarding",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3f344859-4001-4c48-83db-86e7e2d7c118",
+      "name": "Tally Intake Webhook Endpoint",
+      "webhookId": "026746c8-a866-4d5c-8f92-77cbb54d687c"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU",
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 734879788,
+          "mode": "list",
+          "cachedResultName": "Test Invoices for AI Recovery Bot V3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aAO62TeSEFGPi_UFGok4EwoPMlGT-x7zKiHugXxpuMU/edit#gid=734879788"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Client Name": "={{ $json.body.data.fields.find(f => f.label.includes('Company Name')).value }}",
+            "Debtor Email": "={{ $json.body.data.fields.find(f => f.label.includes('Billing Contact')).value }}",
+            "Amount Due": "={{ $json.body.data.fields.find(f => f.label.includes('Total Balance Due')).value }}",
+            "Days Overdue": "={{ $json.body.data.fields.find(f => f.label.includes('Days Past Due')).value }}",
+            "Service Provided": "={{ $json.body.data.fields.find(f => f.label.includes('Project/Service Provided')).value }}",
+            "Status": "Pending",
+            "Tone Preference": "={{ (() => { const f = $json.body.data.fields.find(f => f.type === 'MULTIPLE_CHOICE'); return f.options.find(o => o.id === f.value[0]).text; })() }}",
+            "Email Examples": "={{ $json.body.data.fields.find(f => f.label.includes('AI can copy your exact writing style')).value }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Client Name",
+              "displayName": "Client Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Debtor Email",
+              "displayName": "Debtor Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Invoice Number",
+              "displayName": "Invoice Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount Due",
+              "displayName": "Amount Due",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Due Date",
+              "displayName": "Due Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Days Overdue",
+              "displayName": "Days Overdue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service Provided",
+              "displayName": "Service Provided",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tone Preference",
+              "displayName": "Tone Preference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Examples",
+              "displayName": "Email Examples",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "268128fd-468c-4b21-b775-6fc9a2d32b1a",
+      "name": "Log New Client to CRM",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ibovmL2G4D7Y2Ci4",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Tally Intake Webhook Endpoint": {
+      "main": [
+        [
+          {
+            "node": "Log New Client to CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b4c9cf9b-2e4f-469e-a410-82996175e686",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "202ffa58ae59e962189dcf140e540ab291000d1f91b4dc0d49af54d56a8f2cfc"
+  },
+  "nodeGroups": [],
+  "id": "TtW7L0XUNCkWl3w7",
+  "tags": []
+}
